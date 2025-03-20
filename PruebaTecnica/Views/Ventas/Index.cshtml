@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Listado de Ventas";
+}
+
+<h2>Filtrar Productos Vendidos en 2019</h2>
+
+<label for="categoria">Seleccione una categoría:</label>
+<select id="categoria" class="form-control">
+    <option value="">-- Seleccione --</option>
+    @foreach (var categoria in ViewBag.Categorias)
+    {
+        <option value="@categoria.CodigoCategoria">@categoria.Nombre</option>
+    }
+</select>
+
+<h3>Productos Vendidos:</h3>
+<ul id="productos"></ul>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+        $(document).ready(function() {
+        $('#categoria').change(function() {
+            let categoriaId = $(this).val();
+            $('#productos').empty();
+
+            if (categoriaId) {
+                $.post("/Ventas/Filtrar", { categoriaId: categoriaId }, function(data) {
+                    //error si no hay productos
+                    if (data.length === 0) {
+                        $('#productos').append('<li>No hay productos vendidos en 2019 para esta categoría.</li>');
+                    } else {
+                        $.each(data, function(i, item) {
+                            $('#productos').append('<li>' + item + '</li>');
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+</script>
